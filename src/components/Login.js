@@ -6,7 +6,7 @@ import axios from "../api/axios";
 const LOGIN_URL = "/auth";
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,6 +60,14 @@ const Login = () => {
       errRef.current.focus();
     }
   };
+
+  const togglePersist = () => {
+    setPersist((prev) => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist]);
 
   return (
     <section className="bg-gray-900">
@@ -128,6 +136,16 @@ const Login = () => {
               <button className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Sign In
               </button>
+              <div>
+                <input
+                  className="h-[20px] w-[20px] mx-2 my-2"
+                  type={"checkbox"}
+                  id={"persist"}
+                  onChange={togglePersist}
+                  checked={persist}
+                />
+                <label htmlFor="persist">Trust This Device</label>
+              </div>
             </form>
 
             {/* Sign in Button */}
