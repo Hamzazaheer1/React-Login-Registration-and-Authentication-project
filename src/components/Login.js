@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import useInput from "../hooks/useInput";
+import useToggle from "../hooks/useToggle";
 
 import axios from "../api/axios";
 const LOGIN_URL = "/auth";
@@ -15,9 +17,10 @@ const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
 
-  const [user, setUser] = useState("");
+  const [user, resetUser, userAttribs] = useInput("user", "");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const [check, toggleCheck] = useToggle("persist", false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -44,7 +47,8 @@ const Login = () => {
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
       setAuth({ user, pwd, roles, accessToken });
-      setUser("");
+      // setUser("");
+      resetUser();
       setPwd("");
       navigate(from, { replace: true });
     } catch (err) {
@@ -61,13 +65,13 @@ const Login = () => {
     }
   };
 
-  const togglePersist = () => {
-    setPersist((prev) => !prev);
-  };
+  // const togglePersist = () => {
+  //   setPersist((prev) => !prev);
+  // };
 
-  useEffect(() => {
-    localStorage.setItem("persist", persist);
-  }, [persist]);
+  // useEffect(() => {
+  //   localStorage.setItem("persist", persist);
+  // }, [persist]);
 
   return (
     <section className="bg-gray-900">
@@ -105,8 +109,9 @@ const Login = () => {
                   id="username"
                   ref={userRef}
                   autoComplete="off"
-                  onChange={(e) => setUser(e.target.value)}
-                  value={user}
+                  // onChange={(e) => setUser(e.target.value)}
+                  // value={user}
+                  {...userAttribs}
                   required
                   aria-describedby="uidnote"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -136,13 +141,14 @@ const Login = () => {
               <button className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Sign In
               </button>
+              {/* Toggle Button */}
               <div>
                 <input
                   className="h-[20px] w-[20px] mx-2 my-2"
                   type={"checkbox"}
                   id={"persist"}
-                  onChange={togglePersist}
-                  checked={persist}
+                  onChange={toggleCheck}
+                  checked={check}
                 />
                 <label htmlFor="persist">Trust This Device</label>
               </div>
